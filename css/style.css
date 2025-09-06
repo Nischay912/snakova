@@ -1,0 +1,57 @@
+/* /step4: lets give the default universal margin and padding to 0 */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* step5: now lets give the background image for the container class. */
+.container{
+    /* step6: used ".." as we have to come  */
+    background: url("../assets/bg.png");
+
+    /* step7: now give it height to take 100% of the screen height. */
+    min-height: 100vh;
+
+    /* step8: now lets use the background size to fit the whole screen. */
+    background-size: 100vw 100vh;
+
+    /* step9: now lets make it no repeat so that the image does not repeat when it reaches the end. */
+    background-repeat: no-repeat;
+
+    /* step10: lets make it a flexbox and make it to be vertically and horizontally centered the items inside this container. */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* step11: now lets style the board here below. */
+#board{
+    background: linear-gradient(rgb(0, 17, 255), rgb(255, 0, 123));
+    width: 90vmin;
+    height: 92vmin;
+    border: 2px solid white;
+
+    /* step12: now lets the board as a grid below. */
+    display: grid;
+
+    /* step13: now lets make 18 rows each of 1fr width. */
+    grid-template-rows: repeat(18, 1fr);
+
+    /* step14: now lets make 18 columns each of 1fr width. */
+    grid-template-columns: repeat(18, 1fr);
+}
+
+/* step15: now lets write class for snake's head and the food it eats. */
+
+/* step16: see next steps in the script file there. */
+.head{
+    background-color: rgb(255, 225, 0);
+}
+
+.snake{
+    background-color: rgb(0, 255, 8);
+}
+
+.food{
+    background-color: rgb(255, 140, 0);
+}
