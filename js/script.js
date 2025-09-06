@@ -10,13 +10,15 @@ const foodSound = new Audio("/assets/eat.mp3");
 const gameOverSound = new Audio("/assets/game-over.mp3")
 const moveSound = new Audio("/assets/move.mp3")
 const musicSound = new Audio("/assets/music.mp3")
+// ADDED THIS LINE to loop the music
+musicSound.loop = true;
 
 // step27: lets create a variable speed to control the speed of the game & also to define the last paint time.
 
 // step28: lastpaint contains the time when the last frame was painted/rendered ; keep it initially 0 and will update it everytime a frame is painted/rendered.
 let lastPaintTime = 0;
 // let speed = 2; //can increase and decrease this value to control the speed of the game whenever needed.
-let speed = 7;
+let speed = 16;
 let score = 0;
 
 // step36: lets craete the snake array variable to store the location of the body parts of the snake.
@@ -59,7 +61,26 @@ function main(ctime){
 
 // step57: now we will define the isCollide function to check if the snake collides with itself or not.
 function isCollide(snake){
-    return false; //done for now testing to make the game work by making snake not colliding with anything for now here : will uncomment this later.
+    // return false; //done for now testing to make the game work by making snake not colliding with anything for now here : will uncomment this later.
+
+    // step71: now lets define when to say that the snake has collided in order to stop the game.
+
+    // step72: write condition when snake collides with itself.
+
+    // step73: start from 1st index not 0th as head can't collide with itself obviously.
+    for(let i=1;i<snakeArr.length;i++){
+
+        // step74: now when x and y coordinates of head at 0th index collides with any other body part of snake then return true to indicate that the snake has collided with itself.
+        if(snake[i].x === snake[0].x && snake[i].y === snake[0].y){
+            return true;
+        }
+
+    }
+
+    // step75: also if snake coollides with the boundary then also consider it as collided with itself and ends the game ; since we have 18 rows columns in grid so if snake collides with any of the boundary then it will end the game.
+    if(snake[0].x >= 18 || snake[0].x <= 0 || snake[0].y >= 18 || snake[0].y <= 0){
+        return true;
+    }
 }
 
     function gameEngine(){
@@ -74,13 +95,19 @@ function isCollide(snake){
 
             // step55: we then reset the snakeArr and the score to 0 and alert the user that the game is over and ask them to press any key to restart the game ; also we setback inputDir to 0,0 to indicate that the snake is not moving in any direction now ; i.e. to make the snake stop moving.
             inputDir = {x:0 , y:0};
-            alert("Game Over! Press any key to play again");
+
+            // shifted here so that gets reset to 0 immediately there.
+            score=0;
+            scoreBox.innerHTML = "Score: " + score;
+
+
+            alert("Game Over! Wanna play again ?");
 
             // step56: after key pressed by user score reset to 0 and reset the head of snake at the originla position and also start the music sound again.
 
+            // score = 0;
             snakeArr = [{x:13 , y:15}];
             musicSound.play();
-            score = 0;
         }
 
         // step58: now lets write the logic to update the game when snake eats the food.
@@ -90,6 +117,23 @@ function isCollide(snake){
 
             // step70: add food sound whenever snake eats a food.
             foodSound.play();
+
+            // step76: lets increment the score whenever snake eats a food.
+            score += 1;
+
+            // step89: if the score scored > highscore then update the highscore in local storage.
+            if(score > highscoreval){
+                highscoreval = score;
+                localStorage.setItem("highScore", JSON.stringify(highscoreval));
+                highscoreBox.innerHTML = "High Score: " + highscoreval;
+            }
+
+            // step82: now we show the score after snake eats a food and keep increasing it by 1 whenever snake eats a food.
+
+            // step83: see the next step in index.html now
+            scoreBox.innerHTML = "Score: " + score;
+
+            // step77: see next step in index.html there.
 
             // step60: "unshift" adds element at the beginning in an array ; so we are adding this object in the array of objet at its beginning to move the head of the snake in the direction of key pressed ; and the old head becomes snakeBody now.
             snakeArr.unshift({x : snakeArr[0].x + inputDir.x , y : snakeArr[0].y + inputDir.y});
@@ -165,6 +209,19 @@ function isCollide(snake){
 
 }
 
+// step86: now lets try to access the high score from the localStorage there.
+let highscore = localStorage.getItem("highScore");
+if(highscore === null){
+    highscoreval = 0;
+    // step87: stored as string in localStorage as it only stores strings.
+    localStorage.setItem("highScore" , JSON.stringify(highscoreval));
+}
+else{
+    // step88: converted back to int below and then displayed below.
+    highscoreval = JSON.parse(highscore);
+    highscoreBox.innerHTML = "High Score : " + highscoreval;
+}
+
 // step20: whenever we render animations , its recommended to use requestAnimationFrame because its used for smoother animations which tells browser that before you render or paint the next frame of the game , run this function first and then paint the next frame ; paint frame means in game every time new frame is added to the screen , thats what we are talking about here.
 
 // step21: we pass the function to the requestAnimationFrame here below to be run everytime the screen is refreshed.
@@ -178,6 +235,10 @@ window.addEventListener("keydown" , e => {
 
     // step51: now when user clicks on any key we play the move sound to play and starts the game.
     moveSound.play();
+
+    if (musicSound.paused) {  // ensures it doesn't restart on every key press
+        musicSound.play();
+    }
 
     // step52: now lets use the switch key to see which key is pressed and what to do then ; liek for both wasd and arrow keys ; and also change the direction of the snake accordingly : we have in js origin on top left of container and positive x in its right and positive y in downward direction from there , so for up we will make x=0 and y=-1 , for down we will make x=0 and y=1 , for left we will make x=-1 and y=0 and for right we will make x=1 and y=0.
     switch(e.key) {
