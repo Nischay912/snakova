@@ -18,7 +18,27 @@ musicSound.loop = true;
 // step28: lastpaint contains the time when the last frame was painted/rendered ; keep it initially 0 and will update it everytime a frame is painted/rendered.
 let lastPaintTime = 0;
 // let speed = 2; //can increase and decrease this value to control the speed of the game whenever needed.
-let speed = 16;
+// let speed = 16;
+
+// to add difficulty feature
+let speed = 16; // Default speed
+let difficulty = prompt("Choose difficulty level: 'easy', 'medium', or 'hard'").toLowerCase();
+
+switch(difficulty) {
+    case 'easy':
+        speed = 8;
+        break;
+    case 'medium':
+        speed = 16; // This is your current default speed
+        break;
+    case 'hard':
+        speed = 24;
+        break;
+    default:
+        alert("Invalid choice. Setting difficulty to medium.");
+        speed = 16;
+}
+
 let score = 0;
 
 // step36: lets craete the snake array variable to store the location of the body parts of the snake.
@@ -101,7 +121,20 @@ function isCollide(snake){
             scoreBox.innerHTML = "Score: " + score;
 
 
-            alert("Game Over! Wanna play again ?");
+            // alert("Game Over! Wanna play again ?");
+
+            // Use confirm() instead of alert()
+            if (confirm("Game Over! Press OK to restart or Cancel to stop.")) {
+                // If user presses OK
+                snakeArr = [{x: 13, y: 15}];
+                musicSound.play();
+            } else {
+                // If user presses Cancel
+                // You can add code here to stop the game completely if needed,
+                // for example, by not allowing window.requestAnimationFrame(main) to be called again.
+                // For now, it will just stay on the Game Over screen.
+                alert("Thanks for playing!");
+            }
 
             // step56: after key pressed by user score reset to 0 and reset the head of snake at the originla position and also start the music sound again.
 
@@ -227,6 +260,7 @@ else{
 // step21: we pass the function to the requestAnimationFrame here below to be run everytime the screen is refreshed.
 window.requestAnimationFrame(main);
 
+/*
 // step49: now lets create event to be listened for key press event and run the function written below on each key press there.
 window.addEventListener("keydown" , e => {
 
@@ -273,7 +307,70 @@ window.addEventListener("keydown" , e => {
         inputDir.y = 0;
         break;
 }
+*/
 
+// to prevent 180 degrees turn 
+window.addEventListener("keydown" , e => {
+
+    // Prevent immediate 180-degree turns
+    // If the snake is moving horizontally (x-axis), it can't turn back on the x-axis.
+    // If the snake is moving vertically (y-axis), it can't turn back on the y-axis.
+
+    let currentDir = {...inputDir}; // Create a copy of the current direction
+
+    switch(e.key) {
+        case "ArrowUp":
+        case "w":
+        case "W":
+            if (currentDir.y !== 1) { // Not moving down, so a turn to up is valid
+                inputDir.x = 0;
+                inputDir.y = -1;
+                moveSound.play();
+                if (musicSound.paused) {
+                    musicSound.play();
+                }
+            }
+            break;
+        
+        case "ArrowDown":
+        case "s":
+        case "S":
+            if (currentDir.y !== -1) { // Not moving up, so a turn to down is valid
+                inputDir.x = 0;
+                inputDir.y = 1;
+                moveSound.play();
+                if (musicSound.paused) {
+                    musicSound.play();
+                }
+            }
+            break;
+
+        case "ArrowLeft":
+        case "a":
+        case "A":
+            if (currentDir.x !== 1) { // Not moving right, so a turn to left is valid
+                inputDir.x = -1;
+                inputDir.y = 0;
+                moveSound.play();
+                if (musicSound.paused) {
+                    musicSound.play();
+                }
+            }
+            break;
+        
+        case "ArrowRight":
+        case "d":
+        case "D":
+            if (currentDir.x !== -1) { // Not moving left, so a turn to right is valid
+                inputDir.x = 1;
+                inputDir.y = 0;
+                moveSound.play();
+                if (musicSound.paused) {
+                    musicSound.play();
+                }
+            }
+            break;
+    }
 
     
 });
